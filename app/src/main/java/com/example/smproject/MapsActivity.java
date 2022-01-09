@@ -20,12 +20,15 @@ import com.example.smproject.databinding.ActivityMapsBinding;
 import java.util.List;
 import java.util.Locale;
 
+import lombok.SneakyThrows;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
     GoogleMapOptions options = new GoogleMapOptions();
-    //UiSettings settings = mMap.getUiSettings();
+
+    private Bundle bundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +41,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        bundle = getIntent().getExtras();
     }
 
     /**
@@ -49,14 +54,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
+    @SneakyThrows
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        if(bundle != null){
+            String[] ll = bundle.getString("latLng").split(",");
+            double latitude = Double.parseDouble(ll[0]);
+            double longitude = Double.parseDouble(ll[1]);
+            LatLng latLng = new LatLng(latitude, longitude);
+
+            mMap.addMarker(new MarkerOptions().position(latLng));
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+
+            Geocoder gdc = new Geocoder(MapsActivity.this, Locale.getDefault());
+            List<Address> address = gdc.getFromLocation(latLng.latitude, latLng.longitude,1);
+            if(address.size()>0){
+                String countryName = address.get(0).getCountryName();
+                System.out.println(countryName);
+            }
+        }
         mMap.setTrafficEnabled(true);
         mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
@@ -81,7 +99,5 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
         });
-
-
     }
 }

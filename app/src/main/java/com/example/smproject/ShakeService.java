@@ -8,6 +8,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 
@@ -22,6 +23,7 @@ public class ShakeService extends Service implements SensorEventListener {
     private float mAccel; // acceleration apart from gravity
     private float mAccelCurrent; // current acceleration including gravity
     private float mAccelLast; // last acceleration including gravity
+    private LatLng latLng;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -53,8 +55,8 @@ public class ShakeService extends Service implements SensorEventListener {
         mAccel = mAccel * 0.9f + delta; // perform low-cut filter
 
         if (mAccel > 4) {
-            LatLng latLng = new LatLng(-90 + (int)(Math.random() * ((90 - (-90)) + 1)), -180 + (int)(Math.random() * ((180 - (-180)) + 1)));
-            ServiceActivity.tvShakeService.setText(latLng.toString());
+            latLng = new LatLng(-90 + (int)(Math.random() * ((90 - (-90)) + 1)), -180 + (int)(Math.random() * ((180 - (-180)) + 1)));
+            ServiceActivity.tvShakeService.setText(latLng.latitude + "," + latLng.longitude);
         }
     }
 
