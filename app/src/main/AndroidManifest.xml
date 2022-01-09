@@ -16,6 +16,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SMProject">
         <activity
+            android:name=".ServiceActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
@@ -46,6 +49,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service android:name=".ShakeService" />
     </application>
 
 </manifest>
